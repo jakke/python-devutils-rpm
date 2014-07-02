@@ -7,6 +7,7 @@ Group: Applications/Development
 License: GPL
 URL:http://wms.cc.kuleuven.be/            
 Source: %{name}-%{version}.tar.gz
+NoSource: 0
 
 BuildRequires:zlib-devel, gcc
 BuildRequires:python27-python-devel
@@ -22,12 +23,10 @@ AutoReqProv: no
 
 %description
 
-
-%prep
-%setup -q
-
-
 %build
+echo "-----------------------"
+echo $RPM_BUILD_ROOT
+echo "-----------------------"
 rm -rf $RPM_BUILD_ROOT
 mkdir -p %{builddir}
 cd %{builddir}
@@ -44,8 +43,17 @@ bin/easy_install zopeskel
 mkdir $RPM_BUILD_ROOT/%{toolsdir}
 
 %post
-
-
+#enabeling python2.7 & dev tools for non root user
+#grep -q "/opt/rh/python27/enable" /etc/profile; rc=$?
+#if [ $rc -ne 0 ]; then
+if [ ! -f /etc/profile.d/py27.sh ]; then
+cat << EOF >> /etc/profile.d/py27.sh
+if [ \$(id -u) -ne 0 ]; then
+        export PATH="/opt/python27_tools/:$PATH" 
+        source /opt/rh/python27/enable
+fi
+EOF
+fi
 
 %install
 # reconsider the symlink folder to put in the path
