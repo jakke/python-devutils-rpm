@@ -55,6 +55,11 @@ fi
 EOF
 fi
 
+%postun
+if [ -f /etc/profile.d/py27.sh ]; then
+        rm /etc/profile.d/py27.sh
+fi
+
 %install
 # reconsider the symlink folder to put in the path
 # maybe the virtualenv folder can be put into the path, if the order of the 
